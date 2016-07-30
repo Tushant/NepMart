@@ -89,11 +89,12 @@ class StoreCreateSerializer(ModelSerializer):
 		('name_of_product', 'Ladies Pink Bag'), ('description', 'description'), ('price', Decimal('1600')), ('active', True)])), 
 		('store_category', 'BAGS')])
 		'''
-
+		merchant_data = validated_data.pop('merchant')
+		merchant = Merchant.objects.create(**merchant_data)
 		'''
 		merchant_data 
-		OrderedDict([('user', OrderedDict([('username', 'Priyanka'), ('first_name', 'Priyanka'), ('last_name', 'Basnet'), 
-		('email', 'priyankabasnet03@gmail.com')])), ('phone', 9805320070), ('address', 'Ganesh chowk'), 
+		OrderedDict([('user', OrderedDict([('username', 'Tushant'), ('first_name', 'Tushant'), ('last_name', 'Khatiwada'), 
+		('email', 'tushant@gmail.com')])), ('phone', 999999999), ('address', 'Ganesh chowk'), 
 		('city', 'Biratnagar')])
 		'''
 		print('______________________________________')
