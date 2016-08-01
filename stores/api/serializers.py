@@ -90,7 +90,10 @@ class StoreCreateSerializer(ModelSerializer):
 		('store_category', 'BAGS')])
 		'''
 		merchant_data = validated_data.pop('merchant')
-		merchant = Merchant.objects.create(**merchant_data)
+		for merchant in merchant_data:
+			print('merchant',merchant)
+			merchant,created = Merchant.objects.get_or_create(user=merchant['user']['email'], default=merchant['user'])
+		validated_data['merchant']=merchant
 		'''
 		merchant_data 
 		OrderedDict([('user', OrderedDict([('username', 'Tushant'), ('first_name', 'Tushant'), ('last_name', 'Khatiwada'), 
@@ -116,11 +119,7 @@ class StoreCreateSerializer(ModelSerializer):
 			print('______________________________')
 			print('store categories after created',store_categories)
 			print('______________________________')
-			store.store_categories.add(store_categories)
-			print('store',store)
-		# for merchant in merchant_data:
-		# 	print('______________________________')
-		# 	merchant, created = Merchant.objects.get_or_create(user=merchant['user'])
-		# 	print('merchant,created',merchant)
-		# 	store.merchant.add(merchant)
+			store_categories.product.store = store
+			print('store categories.product.store',store_categories)
+			store_categories.save()
 		return store
