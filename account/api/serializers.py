@@ -19,7 +19,7 @@ User = get_user_model()
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("username","first_name","last_name","email",)
+        fields = ("id","username","first_name","last_name","email",)
 
 class UserProfileChangeSerializer(ModelSerializer):
     username = CharField(required=False, allow_blank=True)

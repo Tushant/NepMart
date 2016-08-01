@@ -11,13 +11,14 @@ from rest_framework.serializers import (
     SerializerMethodField,
     ValidationError
     )
-
+import json
 
 User = get_user_model()
 
 from stores.models import Store, Product, ProductImage, StoreCategory
 from merchants.models import Merchant 
 from merchants.api.serializers import MerchantSerializer
+from account.api.serializers import UserSerializer
 # from product.api.serializers import ProductSerializers
 
 class ProductImageSerializer(ModelSerializer):
@@ -40,7 +41,7 @@ class StoreCategorySerializer(ModelSerializer):
 class StoreSerializer(ModelSerializer):
 	# url = HyperlinkedIdentityField(view_name='stores_detail_api')
 	store_categories = StoreCategorySerializer(many=True) 
-	merchant = MerchantSerializer()
+	merchant = UserSerializer(read_only=True)
 	class Meta:
 		model = Store
 		fields=("id",
@@ -62,7 +63,7 @@ class StoreSerializer(ModelSerializer):
 
 class StoreCreateSerializer(ModelSerializer):
 	store_categories = StoreCategorySerializer()
-	merchant = MerchantSerializer()
+	merchant = UserSerializer()
 	class Meta:
 		model = Store
 		fields=("id",
@@ -90,9 +91,12 @@ class StoreCreateSerializer(ModelSerializer):
 		('store_category', 'BAGS')])
 		'''
 		merchant_data = validated_data.pop('merchant')
-		for merchant in merchant_data:
-			print('merchant',merchant)
-			merchant,created = Merchant.objects.get_or_create(user=merchant['user']['email'], default=merchant['user'])
+		# merchant,created = Merchant.objects.get_or_create(user=merchant_data['user'])
+		for merchantKey, merchantVal in merchant_data.items():
+			print('merchantKey',merchantKey)
+			print('merchantVal',merchantVal)
+			print('merchant_data with key',merchant_data)
+			merchant,created = Merchant.objects.get_or_create(user=merchantKey)
 		validated_data['merchant']=merchant
 		'''
 		merchant_data 

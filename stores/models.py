@@ -1,5 +1,6 @@
 import os
 from django.db import models
+from django.contrib.auth.models import User
 
 from multiselectfield import MultiSelectField
 
@@ -14,7 +15,7 @@ DAY = (( 'Sun', 'Sunday'),
 	   ( 'Sat', 'Saturday')
 	)
 class Store(models.Model):
-	merchant = models.ForeignKey(Merchant)
+	merchant = models.ForeignKey(User)
 	name_of_legal_entity = models.CharField(max_length=250)
 	pan_number = models.CharField(max_length=20)
 	registered_office_address = models.CharField(max_length=200)

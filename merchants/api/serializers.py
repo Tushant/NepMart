@@ -23,4 +23,4 @@ class MerchantSerializer(serializers.ModelSerializer):
 	user = UserSerializer()
 	class Meta:
 		model = Merchant
-		fields = ["id","user","phone","address","city",]
+		# fields = ["pk","user","phone","address","city",]

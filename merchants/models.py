@@ -7,9 +7,6 @@ from django.contrib.auth.models import User
 
 class Merchant(models.Model):
 	user = models.ForeignKey(User)
-	phone = models.PositiveIntegerField(null=True,blank=True)
-	address = models.CharField(max_length=100,blank=True,null=True)
-	city = models.CharField(max_length=100,blank=True,null=True)
 	active = models.BooleanField(default=False)
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
