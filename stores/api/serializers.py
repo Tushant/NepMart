@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q 
+from rest_framework.exceptions import NotFound
 
 from rest_framework.serializers import (
     CharField,
@@ -96,34 +97,38 @@ class StoreCreateSerializer(ModelSerializer):
 			print('merchantKey',merchantKey)
 			print('merchantVal',merchantVal)
 			print('merchant_data with key',merchant_data)
-			merchant,created = Merchant.objects.get_or_create(user=merchantKey)
-		validated_data['merchant']=merchant
-		'''
-		merchant_data 
-		OrderedDict([('user', OrderedDict([('username', 'Tushant'), ('first_name', 'Tushant'), ('last_name', 'Khatiwada'), 
-		('email', 'tushant@gmail.com')])), ('phone', 999999999), ('address', 'Ganesh chowk'), 
-		('city', 'Biratnagar')])
-		'''
-		print('______________________________________')
-		print('validated_data is',validated_data)
+			try:
+				user = User.objects.get(username=merchantVal)
+				merchant,created = Merchant.objects.get_or_create(user=user)
+				validated_data['merchant']=merchant
+				'''
+				merchant_data 
+				OrderedDict([('user', OrderedDict([('username', 'Tushant'), ('first_name', 'Tushant'), ('last_name', 'Khatiwada'), 
+				('email', 'tushant@gmail.com')])), ('phone', 999999999), ('address', 'Ganesh chowk'), 
+				('city', 'Biratnagar')])
+				'''
+				print('______________________________________')
+				print('validated_data is',validated_data)
 
-		'''
-		validated_data is 
-		{'store_long': Decimal('26.4525'), 'registered_office_address': 'Ithari', 'store_end_time': datetime.time(18, 0), 
-		'pan_number': '9843698469', 'store_start_time': datetime.time(10, 0), 'name_of_store': 'Priyanka Bag Shop', 
-		'store_contact_number': 9843698469, 'store_off_day': 'Sat', 'name_of_legal_entity': 'Priyanka Bag Center', 
-		'store_lat': Decimal('29.8900')}
-		'''
+				'''
+				validated_data is 
+				{'store_long': Decimal('26.4525'), 'registered_office_address': 'Ithari', 'store_end_time': datetime.time(18, 0), 
+				'pan_number': '9843698469', 'store_start_time': datetime.time(10, 0), 'name_of_store': 'Priyanka Bag Shop', 
+				'store_contact_number': 9843698469, 'store_off_day': 'Sat', 'name_of_legal_entity': 'Priyanka Bag Center', 
+				'store_lat': Decimal('29.8900')}
+				'''
 
-		store = Store.objects.create(**validated_data)
-		print('__________________________________')
-		print('store.objects.create',store)
-		for store_categories in store_categories_data:
-			store_categories, created = StoreCategory.objects.get_or_create(pan_number=store_categories['pan_number'])
-			print('______________________________')
-			print('store categories after created',store_categories)
-			print('______________________________')
-			store_categories.product.store = store
-			print('store categories.product.store',store_categories)
-			store_categories.save()
-		return store
+				store = Store.objects.create(**validated_data)
+				print('__________________________________')
+				print('store.objects.create',store)
+				for store_categories in store_categories_data:
+					store_categories, created = StoreCategory.objects.get_or_create(pan_number=store_categories['pan_number'])
+					print('______________________________')
+					print('store categories after created',store_categories)
+					print('______________________________')
+					store_categories.product.store = store
+					print('store categories.product.store',store_categories)
+					store_categories.save()
+				return store
+			except User.DoesNotExist:
+				raise NotFound('not found')
