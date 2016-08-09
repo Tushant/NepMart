@@ -98,8 +98,9 @@ class StoreCreateSerializer(ModelSerializer):
 			print('merchantVal',merchantVal)
 			print('merchant_data with key',merchant_data)
 			try:
-				user = User.objects.get(username=merchantVal)
-				merchant,created = Merchant.objects.get_or_create(user=user)
+				merchant,created = User.objects.get_or_create(username=merchantVal)
+				print('merchant',merchant)
+				print(type(merchant))
 				validated_data['merchant']=merchant
 				'''
 				merchant_data 
@@ -121,14 +122,41 @@ class StoreCreateSerializer(ModelSerializer):
 				store = Store.objects.create(**validated_data)
 				print('__________________________________')
 				print('store.objects.create',store)
-				for store_categories in store_categories_data:
-					store_categories, created = StoreCategory.objects.get_or_create(pan_number=store_categories['pan_number'])
-					print('______________________________')
-					print('store categories after created',store_categories)
-					print('______________________________')
-					store_categories.product.store = store
-					print('store categories.product.store',store_categories)
-					store_categories.save()
-				return store
+				image = store_categories_data["product"]["image"]
+				print('image pop results',image)
+				'''
+				image pop results OrderedDict([('image', <InMemoryUploadedFile: grocery.jpg (image/jpeg)>)])
+				'''
+				image_instance = ProductImage(**image)
+				# image_instance grocery.jpg
+				print('image_instance',image_instance)
+				image_instance.save()
+				product = store_categories_data["product"]
+				print('product creation returns',product['name_of_product'])
+				#product creation returns OrderedDict([('name_of_product', 'Pepsodent'), ('description', 'Description on Pepsodent'), ('price', Decimal('220')), ('active', True)])
+				product_instance = Product(
+											store=store,
+											image=image_instance,
+											name_of_product=product['name_of_product'],
+											description=product['description'],
+											price=product['price'],
+											active=product['active']
+										)
+				print('product_instance store',product_instance.store)
+				print('product_instance name_of_product',product_instance.name_of_product)
+				product_instance.save()
+				print('product_instance',product_instance)
+				store_category = store_categories_data['store_category']
+				print('store_category',store_category)
+				store_category = StoreCategory(product=product_instance, store_category=store_category)
+				print('store category instance',store_category)
+				print('store category product',store_category.product)
+				print('store category store_category',store_category.store_category)
+				store_category.product.store = store
+				print('store categories.product.store',store_category.product.store)
+				store_category.save()
+				print('saved')
+				return merchant
+				print('returned')
 			except User.DoesNotExist:
 				raise NotFound('not found')

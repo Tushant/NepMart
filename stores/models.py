@@ -100,7 +100,7 @@ class StoreCategory(models.Model):
         ('BAGS', ('Bags')),
     )
 
-	product = models.ForeignKey(Product,null=True, on_delete=models.CASCADE,related_name="store_category")
+	product = models.ForeignKey(Product,null=True, on_delete=models.CASCADE)
 	store_category = models.CharField(choices=STORE_CATEGORIES, default='GROCERY', max_length=10)
 	# objects = VariationManager()
 
